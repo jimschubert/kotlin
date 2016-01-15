@@ -95,12 +95,6 @@ public class KotlinPathsFromHomeDir implements KotlinPaths {
     }
 
     @NotNull
-    @Override
-    public File getDaemonClientPath() {
-        return getLibraryFile(PathUtil.KOTLIN_DAEMON_CLIENT_JAR);
-    }
-
-    @NotNull
     private File getLibraryFile(@NotNull String fileName) {
         return new File(getLibPath(), fileName);
     }

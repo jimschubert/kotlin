@@ -53,7 +53,4 @@ public interface KotlinPaths {
 
     @NotNull
     File getCompilerPath();
-
-    @NotNull
-    File getDaemonClientPath();
 }
