@@ -158,7 +158,7 @@ fun<Target> updateKotlinIncrementalCache(
 
 
 fun updateLookupStorage(
-        lookupStorage: BasicLookupStorage,
+        lookupStorage: LookupStorage,
         lookupTracker: LookupTracker,
         filesToCompile: Iterable<File>, removedFiles: Iterable<File>
 ) {
@@ -209,7 +209,7 @@ fun<Target> getGeneratedFiles(
 }
 
 
-fun CompilationResult.dirtyFiles(lookupStorage: BasicLookupStorage): Sequence<File> =
+fun CompilationResult.dirtyFiles(lookupStorage: LookupStorage): Sequence<File> =
     // TODO group by fqName?
     changes.mapNotNull { it as? ChangeInfo.MembersChanged }
            .flatMap { change ->
