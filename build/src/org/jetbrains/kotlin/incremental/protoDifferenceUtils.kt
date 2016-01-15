@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.utils.HashSetUtil
 import java.util.*
 
+// WIP extract to separate commit
+
 data class Difference(
         val isClassSignatureChanged: Boolean = false,
         val changedMembersNames: Set<String> = emptySet()
