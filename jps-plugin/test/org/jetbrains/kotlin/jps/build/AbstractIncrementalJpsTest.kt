@@ -384,7 +384,7 @@ abstract class AbstractIncrementalJpsTest(
         p.println("Begin of Lookup Maps")
         p.println()
 
-        val lookupStorage = project.dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
+        val lookupStorage = project.dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider)
         lookupStorage.forceGC()
         p.print(lookupStorage.dump(lookupsDuringTest))
 
