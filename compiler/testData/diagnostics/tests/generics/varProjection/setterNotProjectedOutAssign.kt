@@ -4,6 +4,6 @@ interface Tr<T> {
 }
 
 fun test(t: Tr<*>) {
-    t.v = <!TYPE_MISMATCH!>t<!>
+    t.v = <!TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS!>t<!>
     t.v checkType { _<Tr<*>>() }
 }
