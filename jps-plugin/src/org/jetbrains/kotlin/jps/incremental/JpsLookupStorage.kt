@@ -21,7 +21,7 @@ import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.kotlin.incremental.LookupStorage
 import java.io.File
 
-object LookupStorageProvider : StorageProvider<JpsLookupStorage>() {
+object JpsLookupStorageProvider : StorageProvider<JpsLookupStorage>() {
     override fun createStorage(targetDataDir: File): JpsLookupStorage = JpsLookupStorage(targetDataDir)
 }
 
