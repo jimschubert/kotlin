@@ -303,7 +303,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                         rebuildAfterCacheVersionChanged[target] = true
                     }
 
-                    dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider).clean()
+                    dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider).clean()
                     return
                 }
                 CacheVersion.Action.REBUILD_CHUNK -> {
@@ -335,7 +335,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 }
                 CacheVersion.Action.CLEAN_DATA_CONTAINER -> {
                     LOG.info("Clearing lookup cache")
-                    dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider).clean()
+                    dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider).clean()
                     cacheVersionsProvider.dataContainerVersion().clean()
                 }
                 else -> {
@@ -536,7 +536,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         if (lookupTracker !is LookupTrackerImpl) throw AssertionError("Lookup tracker is expected to be LookupTrackerImpl, got ${lookupTracker.javaClass}")
 
-        val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider)
+        val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
 
         filesToCompile.values().forEach { lookupStorage.removeLookupsFrom(it) }
         val removedFiles = chunk.targets.flatMap { KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, it) }
@@ -746,7 +746,7 @@ private fun CompilationResult.doProcessChangesUsingLookups(
         caches: Collection<IncrementalCacheImpl>
 ) {
     val dirtyLookupSymbols = HashSet<LookupSymbol>()
-    val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider)
+    val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
     val allCaches: Sequence<IncrementalCacheImpl> = caches.asSequence().flatMap { it.dependentsWithThis }.mapNotNull { it as? IncrementalCacheImpl }
 
     KotlinBuilder.LOG.debug("Start processing changes")
