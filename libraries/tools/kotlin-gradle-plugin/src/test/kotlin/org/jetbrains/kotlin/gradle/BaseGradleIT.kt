@@ -1,23 +1,19 @@
 package org.jetbrains.kotlin.gradle
 
 import com.google.common.io.Files
+import org.gradle.api.logging.LogLevel
+import org.junit.After
+import org.junit.Before
 import java.io.File
 import java.io.InputStream
-import org.junit.Before
-import org.junit.After
-import kotlin.test.assertTrue
-import kotlin.test.assertFalse
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.fail
-import org.gradle.api.logging.LogLevel
+import kotlin.test.*
 
 private val SYSTEM_LINE_SEPARATOR = System.getProperty("line.separator")
 
 abstract class BaseGradleIT {
 
-    private val resourcesRootFile = File("src/test/resources")
-    private var workingDir = File(".")
+    protected val resourcesRootFile = File("src/test/resources")
+    protected var workingDir = File(".")
 
     @Before
     fun setUp() {
@@ -31,13 +27,23 @@ abstract class BaseGradleIT {
 
     class BuildOptions(val withDaemon: Boolean = false)
 
-    class Project(val projectName: String, val wrapperVersion: String = "1.4", val minLogLevel: LogLevel = LogLevel.DEBUG)
+    open inner class Project(val projectName: String, val wrapperVersion: String = "1.4", val minLogLevel: LogLevel = LogLevel.DEBUG) {
+        open val resourcesRoot = File(resourcesRootFile, "testProject/$projectName")
+        val projectDir = File(workingDir, projectName)
 
-    class CompiledProject(val project: Project, val output: String, val resultCode: Int)
+        open fun setupWorkingDir() {
+            copyRecursively(this.resourcesRoot, workingDir)
+            copyDirRecursively(File(resourcesRootFile, "GradleWrapper-$wrapperVersion"), projectDir)
+        }
+    }
 
-    fun Project.setupWorkingDir() {
-        copyRecursively(File(resourcesRootFile, "testProject/$projectName"), workingDir)
-        copyDirRecursively(File(resourcesRootFile, "GradleWrapper-$wrapperVersion"), File(workingDir, projectName))
+    class CompiledProject(val project: Project, val output: String, val resultCode: Int) {
+        companion object {
+            val kotlinSourcesListRegex = Regex("\\[KOTLIN\\] compile iteration: ([^\\r\\n]*)")
+            val javaSourcesListRegex = Regex("\\[DEBUG\\] \\[[^\\]]*JavaCompiler\\] Compiler arguments: ([^\\r\\n]*)")
+        }
+        val compiledKotlinSources : Iterable<File> by lazy { kotlinSourcesListRegex.findAll(output).asIterable().flatMap { it.groups[1]!!.value.split(", ").map { File(it) } } }
+        val compiledJavaSources : Iterable<File> by lazy { javaSourcesListRegex.findAll(output).asIterable().flatMap { it.groups[1]!!.value.split(" ").filter { it.endsWith(".java", ignoreCase = true) }.map { File(it) } } }
     }
 
     fun Project.build(vararg tasks: String, options: BuildOptions = BuildOptions(), check: CompiledProject.() -> Unit) {
@@ -47,6 +53,7 @@ abstract class BaseGradleIT {
 
         runAndCheck(cmd, check)
     }
+
 
     fun stopDaemon(ver: String) {
         val wrapperDir = File(resourcesRootFile, "GradleWrapper-$ver")
@@ -121,11 +128,36 @@ abstract class BaseGradleIT {
         return this
     }
 
+    private fun Iterable<File>.projectRelativePaths(project: Project): Iterable<String> {
+        val canonicalProjectDir = File(workingDir.canonicalFile, project.projectName)
+        return map { it.canonicalFile.toRelativeString(canonicalProjectDir) }
+    }
+
+    fun CompiledProject.assertSameFiles(expected: Iterable<String>, actual: Iterable<String>, messagePrefix: String = ""): CompiledProject {
+        assertTrue(actual.toSet() == expected.toSet(), messagePrefix + "expected files: ${expected.joinToString()}\n  actual files: ${actual.joinToString()}")
+        return this
+    }
+
+    fun CompiledProject.assertContainFiles(expected: Iterable<String>, actual: Iterable<String>, messagePrefix: String = ""): CompiledProject {
+        assertTrue(expected.toSet().containsAll(actual.toList()), messagePrefix + "expected files: ${expected.joinToString()}\n  actual files: ${actual.joinToString()}")
+        return this
+    }
+
+    fun CompiledProject.assertCompiledKotlinSources(vararg sources: String): CompiledProject = assertSameFiles(sources.asIterable(), compiledKotlinSources.projectRelativePaths(this.project), "Compiled Kotlin files differ:\n  ")
+
+    fun CompiledProject.assertCompiledKotlinSourcesContain(vararg sources: String): CompiledProject = assertContainFiles(sources.asIterable(), compiledKotlinSources.projectRelativePaths(this.project), "Compiled Kotlin files differ:\n  ")
+
+    fun CompiledProject.assertCompiledJavaSources(vararg sources: String): CompiledProject = assertSameFiles(sources.asIterable(), compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ:\n  ")
+
+    fun CompiledProject.assertCompiledJavaSourcesContain(vararg sources: String): CompiledProject = assertContainFiles(sources.asIterable(), compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ:\n  ")
+
+
     private fun Project.createBuildCommand(params: Array<out String>, options: BuildOptions): List<String> {
         val pathToKotlinPlugin = "-PpathToKotlinPlugin=" + File("local-repo").getAbsolutePath()
         val tailParameters = params.asList() +
                 listOf( pathToKotlinPlugin,
                         if (options.withDaemon) "--daemon" else "--no-daemon",
+                        "--stacktrace",
                         "--${minLogLevel.name().toLowerCase()}",
                         "-Pkotlin.gradle.test=true")
 
