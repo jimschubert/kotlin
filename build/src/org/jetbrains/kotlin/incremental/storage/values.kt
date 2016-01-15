@@ -30,6 +30,7 @@ data class LookupSymbolKey(val nameHash: Int, val scopeHash: Int) : Comparable<L
     }
 }
 
+//TODO extract to jps
 class PathFunctionPair(
         val path: String,
         val function: String
