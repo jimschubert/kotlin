@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 
+//WIP extract to separate commit
 class LocalFileKotlinClass private constructor(
         private val file: File,
         private val fileContents: ByteArray,
