@@ -2,6 +2,9 @@
 
 inline fun<reified T> foo(block: () -> T): String = block().toString()
 
+@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
+fun <reified T: Any> javaClass(): Class<T> = T::class.java
+
 fun box() {
     val a = <!UNSUPPORTED!><!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>arrayOf<!>(null!!)<!>
     val b = <!UNSUPPORTED!><!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>Array<!><Nothing?>(5) { null!! }<!>

@@ -2,3 +2,4 @@ package
 
 public fun box(): kotlin.Unit
 public inline fun </*0*/ reified T> foo(/*0*/ block: () -> T): kotlin.String
+@kotlin.Suppress(names = {"REIFIED_TYPE_PARAMETER_NO_INLINE"}) public fun </*0*/ reified T : kotlin.Any> javaClass(): java.lang.Class<T>
