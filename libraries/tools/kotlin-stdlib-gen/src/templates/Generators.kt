@@ -10,6 +10,7 @@ fun generators(): List<GenericFunction> {
 
         only(Iterables, Collections, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection and then the given [element]." }
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("List<T>")
         body {
             """
@@ -55,6 +56,7 @@ fun generators(): List<GenericFunction> {
 
         only(Iterables, Collections, Sets, Sequences)
         doc { f -> "Returns a list containing all elements of the original ${f.collection} and then all elements of the given [elements] collection." }
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("List<T>")
         returns("SELF", Sets, Sequences)
         body {
@@ -112,6 +114,7 @@ fun generators(): List<GenericFunction> {
 
         only(Iterables, Collections, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection and then all elements of the given [elements] array." }
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("List<T>")
         returns("SELF", Sets, Sequences)
         body {
@@ -161,6 +164,7 @@ fun generators(): List<GenericFunction> {
 
         only(Iterables, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection and then all elements of the given [elements] sequence." }
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("List<T>")
         returns("SELF", Sets, Sequences)
         body {
@@ -211,6 +215,7 @@ fun generators(): List<GenericFunction> {
 
         only(Iterables, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection without the first occurrence of the given [element]." }
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("List<T>")
         body {
             """
@@ -250,6 +255,7 @@ fun generators(): List<GenericFunction> {
 
         only(Iterables, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection except the elements contained in the given [elements] collection." }
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("List<T>")
         returns("SELF", Sets, Sequences)
         body {
@@ -305,6 +311,7 @@ fun generators(): List<GenericFunction> {
 
         only(Iterables, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection except the elements contained in the given [elements] array." }
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("List<T>")
         returns("SELF", Sets, Sequences)
         body {
@@ -349,6 +356,7 @@ fun generators(): List<GenericFunction> {
 
         only(Iterables, Sets)
         doc { "Returns a list containing all elements of the original collection except the elements contained in the given [elements] sequence." }
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("List<T>")
         returns("SELF", Sets, Sequences)
         body {
