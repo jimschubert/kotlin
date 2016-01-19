@@ -7364,6 +7364,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/tpAsReified"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("CapturedAsReified.kt")
+                public void testCapturedAsReified() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/tpAsReified/CapturedAsReified.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("Conventions.kt")
                 public void testConventions() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/tpAsReified/Conventions.kt");
