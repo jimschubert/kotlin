@@ -1,0 +1,4 @@
+package
+
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.internal.PureReifiable() public inline fun </*0*/ reified T> foo(/*0*/ x: T): kotlin.Unit
+public fun test(): kotlin.Unit

@@ -15,6 +15,7 @@
  */
 
 package kotlin
+import kotlin.internal.PureReifiable
 
 /**
  * Returns true if the receiver and the [other] object are the same object instance, or if they
@@ -38,4 +39,5 @@ public operator fun String?.plus(other: Any?): String
 /**
  * Returns an array of objects of the given type with the given [size], initialized with null values.
  */
-public fun arrayOfNulls<reified T>(size: Int): Array<T?>
+@PureReifiable
+public fun <reified T> arrayOfNulls(size: Int): Array<T?>

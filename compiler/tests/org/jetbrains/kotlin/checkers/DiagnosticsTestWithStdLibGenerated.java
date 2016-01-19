@@ -119,9 +119,15 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         doTest(fileName);
     }
 
-    @TestMetadata("pureReificationArrays.kt")
-    public void testPureReificationArrays() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/pureReificationArrays.kt");
+    @TestMetadata("pureReifiable.kt")
+    public void testPureReifiable() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/pureReifiable.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("pureReifiableArrayOperations.kt")
+    public void testPureReifiableArrayOperations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/pureReifiableArrayOperations.kt");
         doTest(fileName);
     }
 

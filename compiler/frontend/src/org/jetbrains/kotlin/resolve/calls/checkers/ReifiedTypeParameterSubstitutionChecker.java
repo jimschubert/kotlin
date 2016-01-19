@@ -54,7 +54,7 @@ public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
                     context.trace.report(
                             Errors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION.on(getElementToReport(context, parameter.getIndex()), argument));
                 }
-                else if (TypeUtilsKt.unsafeAsReifiedArgument(argument) && !hasPureReificationAnnotation(parameter)) {
+                else if (TypeUtilsKt.unsafeAsReifiedArgument(argument) && !isOwnerAnnotatedPureReifiable(parameter)) {
                     context.trace.report(
                             Errors.REIFIED_TYPE_UNSAFE_SUBSTITUTION.on(getElementToReport(context, parameter.getIndex()), argument));
                 }
@@ -62,9 +62,9 @@ public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
         }
     }
 
-    private static final FqName PURE_REIFICATION_ANNOTATION_FQ_NAME = new FqName("kotlin.internal.PureReification");
-    private static boolean hasPureReificationAnnotation(@NotNull TypeParameterDescriptor parameter) {
-        return parameter.getAnnotations().hasAnnotation(PURE_REIFICATION_ANNOTATION_FQ_NAME);
+    private static final FqName PURE_REIFIABLE_ANNOTATION_FQ_NAME = new FqName("kotlin.internal.PureReifiable");
+    private static boolean isOwnerAnnotatedPureReifiable(@NotNull TypeParameterDescriptor parameter) {
+        return parameter.getContainingDeclaration().getAnnotations().hasAnnotation(PURE_REIFIABLE_ANNOTATION_FQ_NAME);
     }
 
     @NotNull
