@@ -283,16 +283,6 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
             return groupValues_!!
         }
 
-    private var destructured_: Destructured? = null
-
-    override val destructured: Destructured
-        get() {
-            if (destructured_ == null) {
-                destructured_ = Destructured(this)
-            }
-            return destructured_!!
-        }
-
     override fun next(): MatchResult? {
         val nextIndex = matchResult.end() + if (matchResult.end() == matchResult.start()) 1 else 0
         return if (nextIndex <= input.length) matcher.findNext(nextIndex, input) else null

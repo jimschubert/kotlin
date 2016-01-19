@@ -226,20 +226,11 @@ private fun RegExp.findNext(input: String, from: Int): MatchResult? {
                 return groupValues_!!
             }
 
-        private var destructured_: Destructured? = null
-
-        override val destructured: Destructured
-            get() {
-                if (destructured_ == null) {
-                    destructured_ = Destructured(this)
-                }
-                return destructured_!!
-            }
-
         override fun next(): MatchResult? = this@findNext.findNext(input, if (range.isEmpty()) range.start + 1 else range.end + 1)
     }
 }
 
+// TODO: Move into MatchResult after KT-4124 is implemented
 public class Destructured internal constructor(public val match: MatchResult) {
     public operator inline fun component1():  String = match.groupValues[1]
     public operator inline fun component2():  String = match.groupValues[2]

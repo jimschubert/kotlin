@@ -78,7 +78,7 @@ public interface MatchResult {
      * val (name, phone) = Regex("(\\w+) (\\d+)").match(inputString)!!.destructured
      * ```
      */
-    public val destructured: Destructured
+    public val destructured: Destructured get() = Destructured(this)
 
     /** Returns a new [MatchResult] with the results for the next match, starting at the position
      *  at which the last match ended (at the character after the last matched character).
