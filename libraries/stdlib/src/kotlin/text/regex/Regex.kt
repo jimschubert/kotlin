@@ -57,19 +57,55 @@ public interface MatchResult {
      */
     public val groups: MatchGroupCollection
     /**
-     * A list of matched indexed group values except zeroth group corresponding to the entire match.
+     * A list of matched indexed group values.
      *
+     * This list has size of `groupCount + 1` where `groupCount` is the count of groups in the regular expression.
      * Unlike [groups] collection this list contains exactly `groupCount` items where `groupCount` is the count of groups in the regular expression.
-     * Groups are are indexed from *zero* to the `groupCount - 1`.
+     * Groups are indexed from 1 to `groupCount` and group with the index 0 corresponds to the entire match.
      *
      * If the group in the regular expression is optional and there was not match captured by that group,
      * corresponding item in [groupValues] would be an empty string.
      */
     public val groupValues: List<String>
 
+    /**
+     * An instance of [MatchResult.Destructured] wrapper providing components for destructuring assignment of group values.
+     *
+     * component1 corresponds to the value of the first group, component2 — of the second, and so on.
+     *
+     * @sample:
+     * ```
+     * val (name, phone) = Regex("(\\w+) (\\d+)").match(inputString)!!.destructured
+     * ```
+     */
+    public val destructured: Destructured
+
     /** Returns a new [MatchResult] with the results for the next match, starting at the position
      *  at which the last match ended (at the character after the last matched character).
      */
     public fun next(): MatchResult?
-}
 
+    /**
+     * Provides components for destructuring assignment of group values.
+     *
+     * [component1] corresponds to the value of the first group, [component2] — of the second, and so on.
+     *
+     * If the group in the regular expression is optional and there was not match captured by that group,
+     * corresponding item in [groupValues] would be an empty string.
+     */
+    @Suppress("NOTHING_TO_INLINE")
+    @kotlin.jvm.JvmVersion
+    public class Destructured internal constructor(public val match: MatchResult) {
+        public operator inline fun component1():  String = match.groupValues[1]
+        public operator inline fun component2():  String = match.groupValues[2]
+        public operator inline fun component3():  String = match.groupValues[3]
+        public operator inline fun component4():  String = match.groupValues[4]
+        public operator inline fun component5():  String = match.groupValues[5]
+        public operator inline fun component6():  String = match.groupValues[6]
+        public operator inline fun component7():  String = match.groupValues[7]
+        public operator inline fun component8():  String = match.groupValues[8]
+        public operator inline fun component9():  String = match.groupValues[9]
+        public operator inline fun component10(): String = match.groupValues[10]
+        public fun toList(): List<String> = match.groupValues.drop(1)
+    }
+}

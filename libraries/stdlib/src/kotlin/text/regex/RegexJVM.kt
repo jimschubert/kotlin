@@ -19,6 +19,7 @@ package kotlin.text
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.text.MatchResult.*
 
 private interface FlagEnum {
     public val value: Int
@@ -275,11 +276,21 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
         get() {
             if (groupValues_ == null) {
                 groupValues_ = object : AbstractList<String>() {
-                    override val size: Int get() = matchResult.groupCount()
-                    override fun get(index: Int): String = matchResult.group(index + 1) ?: ""
+                    override val size: Int get() = matchResult.groupCount() + 1
+                    override fun get(index: Int): String = matchResult.group(index) ?: ""
                 }
             }
             return groupValues_!!
+        }
+
+    private var destructured_: Destructured? = null
+
+    override val destructured: Destructured
+        get() {
+            if (destructured_ == null) {
+                destructured_ = Destructured(this)
+            }
+            return destructured_!!
         }
 
     override fun next(): MatchResult? {
