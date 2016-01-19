@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class MemberDeserializer(private val c: DeserializationContext) {
     fun loadProperty(proto: ProtoBuf.Property): PropertyDescriptor {
-        val flags = proto.flags
+        val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags, Flags.HAS_CONSTANT)
 
         val property = DeserializedPropertyDescriptor(
                 c.containingDeclaration, null,
@@ -135,14 +135,23 @@ class MemberDeserializer(private val c: DeserializationContext) {
         return property
     }
 
+    private fun loadOldFlags(flags: Int, lastFlag: Flags.FlagField<*>): Int {
+        @Suppress("DEPRECATION")
+        val mask = (1 shl (lastFlag.offset + 1)) - 1
+        val lowSixBits = flags and 0x3f
+        val rest = ((flags shr 8) and mask) shl 6
+        return lowSixBits + rest
+    }
+
     fun loadFunction(proto: ProtoBuf.Function): FunctionDescriptor {
-        val annotations = getAnnotations(proto, proto.flags, AnnotatedCallableKind.FUNCTION)
+        val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags, Flags.IS_EXTERNAL_FUNCTION)
+        val annotations = getAnnotations(proto, flags, AnnotatedCallableKind.FUNCTION)
         val receiverAnnotations = if (proto.hasReceiver())
             getReceiverParameterAnnotations(proto, AnnotatedCallableKind.FUNCTION)
         else Annotations.EMPTY
         val function = DeserializedSimpleFunctionDescriptor(
                 c.containingDeclaration, /* original = */ null, annotations, c.nameResolver.getName(proto.name),
-                Deserialization.memberKind(Flags.MEMBER_KIND.get(proto.flags)), proto, c.nameResolver, c.typeTable, c.packagePartSource
+                Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)), proto, c.nameResolver, c.typeTable, c.packagePartSource
         )
         val local = c.childContext(function, proto.typeParameterList)
         function.initialize(
@@ -151,14 +160,14 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 local.typeDeserializer.ownTypeParameters,
                 local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
                 local.typeDeserializer.type(proto.returnType(c.typeTable)),
-                Deserialization.modality(Flags.MODALITY.get(proto.flags)),
-                Deserialization.visibility(Flags.VISIBILITY.get(proto.flags))
+                Deserialization.modality(Flags.MODALITY.get(flags)),
+                Deserialization.visibility(Flags.VISIBILITY.get(flags))
         )
-        function.isOperator = Flags.IS_OPERATOR.get(proto.flags)
-        function.isInfix = Flags.IS_INFIX.get(proto.flags)
-        function.isExternal = Flags.IS_EXTERNAL_FUNCTION.get(proto.flags)
-        function.isInline = Flags.IS_INLINE.get(proto.flags)
-        function.isTailrec = Flags.IS_TAILREC.get(proto.flags)
+        function.isOperator = Flags.IS_OPERATOR.get(flags)
+        function.isInfix = Flags.IS_INFIX.get(flags)
+        function.isExternal = Flags.IS_EXTERNAL_FUNCTION.get(flags)
+        function.isInline = Flags.IS_INLINE.get(flags)
+        function.isTailrec = Flags.IS_TAILREC.get(flags)
         return function
     }
 

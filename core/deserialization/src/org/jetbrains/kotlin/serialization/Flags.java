@@ -36,17 +36,13 @@ public class Flags {
     public static final BooleanFlagField IS_INNER = FlagField.booleanAfter(CLASS_KIND);
     public static final BooleanFlagField IS_DATA = FlagField.booleanAfter(IS_INNER);
 
-    // Callables
-
-    // TODO: use these flags
-    public static final BooleanFlagField RESERVED_1 = FlagField.booleanAfter(MODALITY);
-    public static final BooleanFlagField RESERVED_2 = FlagField.booleanAfter(RESERVED_1);
-
-    public static final FlagField<ProtoBuf.MemberKind> MEMBER_KIND = FlagField.after(RESERVED_2, ProtoBuf.MemberKind.values());
-
     // Constructors
 
     public static final BooleanFlagField IS_SECONDARY = FlagField.booleanAfter(VISIBILITY);
+
+    // Callables
+
+    public static final FlagField<ProtoBuf.MemberKind> MEMBER_KIND = FlagField.after(MODALITY, ProtoBuf.MemberKind.values());
 
     // Functions
 
@@ -73,7 +69,6 @@ public class Flags {
 
     // Accessors
 
-    // It's important that this flag is negated: "is NOT default" instead of "is default"
     public static final BooleanFlagField IS_NOT_DEFAULT = FlagField.booleanAfter(MODALITY);
     public static final BooleanFlagField IS_EXTERNAL_ACCESSOR = FlagField.booleanAfter(IS_NOT_DEFAULT);
 
@@ -314,8 +309,12 @@ public class Flags {
             return getIntValue(value) << offset;
         }
 
-        protected abstract int getIntValue(E value);
+        @Deprecated
+        public int getOffset() {
+            return offset;
+        }
 
+        protected abstract int getIntValue(E value);
     }
 
     public static class BooleanFlagField extends FlagField<Boolean> {
