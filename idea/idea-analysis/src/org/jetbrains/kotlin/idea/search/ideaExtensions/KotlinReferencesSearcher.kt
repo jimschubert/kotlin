@@ -191,7 +191,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                                 val originLightClass = LightClassUtil.getPsiClass(originClass)
                                 if (originLightClass != null) {
                                     val lightDeclarations: List<KtLightElement<*, *>?> =
-                                            originLightClass.methods.map { it as? KtLightMethod } +
+                                            originLightClass.methods.map { it as? KtLightMethod } as List<KtLightElement<*,*>?> +
                                             originLightClass.fields.map { it as? KtLightField }
 
                                     for (declaration in element.declarations) {
