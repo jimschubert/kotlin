@@ -119,6 +119,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         doTest(fileName);
     }
 
+    @TestMetadata("pureReificationArrays.kt")
+    public void testPureReificationArrays() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/pureReificationArrays.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("RedeclarationMainInMultiFileClass.kt")
     public void testRedeclarationMainInMultiFileClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/RedeclarationMainInMultiFileClass.kt");
