@@ -49,7 +49,7 @@ public interface MessageRenderer {
         @Override
         protected String getPath(@NotNull CompilerMessageLocation location) {
             String path = location.getPath();
-            return cwd == null || path == null ? path : FilesKt.relativePath(cwd, new File(path));
+            return cwd == null || path == null ? path : FilesKt.relativeToOrSelf(new File(path), cwd).getPath();
         }
     };
 
