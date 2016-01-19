@@ -54,7 +54,8 @@ public abstract class KotlinBuiltIns {
     public static final Set<FqName> BUILT_INS_PACKAGE_FQ_NAMES = setOf(
             BUILT_INS_PACKAGE_FQ_NAME,
             ANNOTATION_PACKAGE_FQ_NAME,
-            ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME()
+            ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME(),
+            BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
     );
 
     protected final ModuleDescriptorImpl builtInsModule;
