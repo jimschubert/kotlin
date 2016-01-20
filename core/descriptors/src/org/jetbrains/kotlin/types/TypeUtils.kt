@@ -143,3 +143,6 @@ fun KotlinType.getImmediateSuperclassNotAny(): KotlinType? {
         TypeUtils.createSubstitutedSupertype(this, it, TypeSubstitutor.create(this))
     }
 }
+
+fun KotlinType.asTypeArgument(): TypeProjection = TypeProjectionImpl(this)
+fun KotlinType.containsSpecialType(predicate: (KotlinType) -> Boolean) = TypeUtils.containsSpecialType(this, predicate)

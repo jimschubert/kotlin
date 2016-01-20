@@ -10128,6 +10128,39 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/j+k/samByProjectedType")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class SamByProjectedType extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInSamByProjectedType() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/samByProjectedType"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("genericInReturnType.kt")
+                public void testGenericInReturnType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/samByProjectedType/genericInReturnType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("genericInValueParameter.kt")
+                public void testGenericInValueParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/samByProjectedType/genericInValueParameter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noAdapterBecuaseOfRecursiveUpperBound.kt")
+                public void testNoAdapterBecuaseOfRecursiveUpperBound() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/samByProjectedType/noAdapterBecuaseOfRecursiveUpperBound.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("starProjectionComplexUpperBound.kt")
+                public void testStarProjectionComplexUpperBound() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/samByProjectedType/starProjectionComplexUpperBound.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/j+k/types")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
