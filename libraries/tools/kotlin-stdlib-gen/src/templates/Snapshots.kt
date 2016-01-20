@@ -134,6 +134,15 @@ fun snapshots(): List<GenericFunction> {
         typeParam("V")
         returns("Map<K, V>")
         annotations("""@kotlin.jvm.JvmName("toMapOfPairs")""")
+        deprecate(Deprecation("Use arrange instead.", replaceWith = "arrange(transform)"))
+    }
+
+    templates add f("arrange(transform: (T) -> Pair<K, V>)") {
+        inline(true)
+        include(CharSequences)
+        typeParam("K")
+        typeParam("V")
+        returns("Map<K, V>")
         doc { f ->
             """
             Returns a [Map] containing key-value pairs provided by [transform] function applied to ${f.element}s of the given ${f.collection}.
@@ -184,11 +193,19 @@ fun snapshots(): List<GenericFunction> {
     templates add f("toMapBy(selector: (T) -> K)") {
         inline(true)
         typeParam("K")
+        returns("Map<K, T>")
+        include(CharSequences)
+        deprecate(Deprecation("Use arrangeBy instead.", replaceWith = "arrangeBy(selector)"))
+    }
+
+    templates add f("arrangeBy(keySelector: (T) -> K)") {
+        inline(true)
+        typeParam("K")
         doc { f ->
             """
             Returns a [Map] containing the ${f.element.pluralize()} from the given ${f.collection} indexed by the key
-            returned from [selector] function applied to each ${f.element}.
-            If any two ${f.element.pluralize()} would have the same key returned by [selector] the last one gets added to the map.
+            returned from [keySelector] function applied to each ${f.element}.
+            If any two ${f.element.pluralize()} would have the same key returned by [keySelector] the last one gets added to the map.
             """
         }
         returns("Map<K, T>")
@@ -203,7 +220,7 @@ fun snapshots(): List<GenericFunction> {
             val capacity = (collectionSizeOrDefault(10)/.75f) + 1
             val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
             for (element in this) {
-                result.put(selector(element), element)
+                result.put(keySelector(element), element)
             }
             return result
             """
@@ -212,7 +229,7 @@ fun snapshots(): List<GenericFunction> {
             """
             val result = LinkedHashMap<K, T>()
             for (element in this) {
-                result.put(selector(element), element)
+                result.put(keySelector(element), element)
             }
             return result
             """
@@ -223,7 +240,7 @@ fun snapshots(): List<GenericFunction> {
             val capacity = (length/.75f) + 1
             val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
             for (element in this) {
-                result.put(selector(element), element)
+                result.put(keySelector(element), element)
             }
             return result
             """
@@ -233,7 +250,7 @@ fun snapshots(): List<GenericFunction> {
             val capacity = (size/.75f) + 1
             val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
             for (element in this) {
-                result.put(selector(element), element)
+                result.put(keySelector(element), element)
             }
             return result
             """
@@ -252,20 +269,29 @@ fun snapshots(): List<GenericFunction> {
             """
         }
         returns("Map<K, V>")
-        deprecate(Deprecation("Use toMapBy instead.", "toMapBy(selector, transform)"))
+        deprecate(Deprecation("Use arrangeBy instead.", "arrangeBy(selector, transform)"))
 
         deprecate(Strings) { forBinaryCompatibility }
-        body(Strings) { "return toMapBy(selector, transform)"}
+        body(Strings) { "return toMapBy(selector, transform)" }
     }
 
     templates add f("toMapBy(selector: (T) -> K, transform: (T) -> V)") {
         inline(true)
         typeParam("K")
         typeParam("V")
+        include(CharSequences)
+        returns("Map<K, V>")
+        deprecate(Deprecation("Use arrangeBy instead.", replaceWith = "arrangeBy(selector, transform)"))
+    }
+
+    templates add f("arrangeBy(keySelector: (T) -> K, valueTransform: (T) -> V)") {
+        inline(true)
+        typeParam("K")
+        typeParam("V")
         doc { f ->
             """
-            Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to ${f.element.pluralize()} of the given ${f.collection}.
-            If any two ${f.element.pluralize()} would have the same key returned by [selector] the last one gets added to the map.
+            Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to ${f.element.pluralize()} of the given ${f.collection}.
+            If any two ${f.element.pluralize()} would have the same key returned by [keySelector] the last one gets added to the map.
             """
         }
         returns("Map<K, V>")
@@ -280,7 +306,7 @@ fun snapshots(): List<GenericFunction> {
             val capacity = (collectionSizeOrDefault(10)/.75f) + 1
             val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
             for (element in this) {
-                result.put(selector(element), transform(element))
+                result.put(keySelector(element), valueTransform(element))
             }
             return result
             """
@@ -289,7 +315,7 @@ fun snapshots(): List<GenericFunction> {
             """
             val result = LinkedHashMap<K, V>()
             for (element in this) {
-                result.put(selector(element), transform(element))
+                result.put(keySelector(element), valueTransform(element))
             }
             return result
             """
@@ -299,7 +325,7 @@ fun snapshots(): List<GenericFunction> {
             val capacity = (length/.75f) + 1
             val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
             for (element in this) {
-                result.put(selector(element), transform(element))
+                result.put(keySelector(element), valueTransform(element))
             }
             return result
             """
@@ -309,7 +335,7 @@ fun snapshots(): List<GenericFunction> {
             val capacity = (size/.75f) + 1
             val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
             for (element in this) {
-                result.put(selector(element), transform(element))
+                result.put(keySelector(element), valueTransform(element))
             }
             return result
             """

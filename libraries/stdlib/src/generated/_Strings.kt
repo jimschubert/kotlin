@@ -733,6 +733,61 @@ public fun String.reversed(): String {
 }
 
 /**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to characters of the given char sequence.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> CharSequence.arrange(transform: (Char) -> Pair<K, V>): Map<K, V> {
+    val capacity = (length/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the characters from the given char sequence indexed by the key
+ * returned from [keySelector] function applied to each character.
+ * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> CharSequence.arrangeBy(keySelector: (Char) -> K): Map<K, Char> {
+    val capacity = (length/.75f) + 1
+    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the characters from the given string indexed by the key
+ * returned from [keySelector] function applied to each character.
+ * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public inline fun <K> String.arrangeBy(keySelector: (Char) -> K): Map<K, Char> {
+    val capacity = (length/.75f) + 1
+    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to characters of the given char sequence.
+ * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> CharSequence.arrangeBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
+    val capacity = (length/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), valueTransform(element))
+    }
+    return result
+}
+
+/**
  * Returns an [ArrayList] of all characters.
  */
 public fun CharSequence.toArrayList(): ArrayList<Char> {
@@ -820,9 +875,9 @@ public inline fun <K> String.toMap(selector: (Char) -> K): Map<K, Char> {
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to characters of the given char sequence.
  * If any two characters would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use arrangeBy instead.", ReplaceWith("arrangeBy(selector, transform)"))
 public inline fun <K, V> CharSequence.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return arrangeBy(selector, transform)
 }
 
 /**
@@ -834,60 +889,20 @@ public inline fun <K, V> String.toMap(selector: (Char) -> K, transform: (Char) -
     return toMapBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to characters of the given char sequence.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use arrange instead.", ReplaceWith("arrange(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> CharSequence.toMap(transform: (Char) -> Pair<K, V>): Map<K, V> {
-    val capacity = (length/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return arrange(transform)
 }
 
-/**
- * Returns a [Map] containing the characters from the given char sequence indexed by the key
- * returned from [selector] function applied to each character.
- * If any two characters would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use arrangeBy instead.", ReplaceWith("arrangeBy(selector)"))
 public inline fun <K> CharSequence.toMapBy(selector: (Char) -> K): Map<K, Char> {
-    val capacity = (length/.75f) + 1
-    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return arrangeBy(selector)
 }
 
-/**
- * Returns a [Map] containing the characters from the given string indexed by the key
- * returned from [selector] function applied to each character.
- * If any two characters would have the same key returned by [selector] the last one gets added to the map.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <K> String.toMapBy(selector: (Char) -> K): Map<K, Char> {
-    val capacity = (length/.75f) + 1
-    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
-}
-
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to characters of the given char sequence.
- * If any two characters would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use arrangeBy instead.", ReplaceWith("arrangeBy(selector, transform)"))
 public inline fun <K, V> CharSequence.toMapBy(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
-    val capacity = (length/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return arrangeBy(selector, transform)
 }
 
 /**
